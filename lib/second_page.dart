@@ -8,6 +8,33 @@ class skypekely extends StatefulWidget {
 }
 
 class _SkypeKelyState extends State<skypekely> {
+
+  List<String> messages = [];
+
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller.addListener(() {
+      final String text = _controller.text();
+      _controller.value = _controller.value.copyWith(
+        text: text,
+        selection: TextSelection(
+          baseOffset: text.length,
+          extentOffset: text.length,
+        ),
+        composing: TextRange.empty,
+      );
+
+      // Ajouter la chaîne perçue dans le tableau messages
+      messages.add(text);
+      print('Messages: $messages');
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
