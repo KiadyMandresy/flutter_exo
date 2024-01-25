@@ -18,21 +18,18 @@ class _SkypeKelyState extends State<skypekely> {
     super.initState();
 
     _controller.addListener(() {
-      final String text = _controller.text();
-      _controller.value = _controller.value.copyWith(
-        text: text,
-        selection: TextSelection(
-          baseOffset: text.length,
-          extentOffset: text.length,
-        ),
-        composing: TextRange.empty,
-      );
-
-      // Ajouter la chaîne perçue dans le tableau messages
+      final String text = _controller.text;
       messages.add(text);
       print('Messages: $messages');
     });
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
 
 
   @override
@@ -93,10 +90,10 @@ class _SkypeKelyState extends State<skypekely> {
   Widget _buildTextField() {
     return Container(
       width: 300,
-      child: const TextField(
+      child:  TextField(
+        controller: _controller,
         keyboardType: TextInputType.multiline,
-        //maxLines: null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Tapez un message ...',
           //border: InputBorder.none,
           border: OutlineInputBorder(),
