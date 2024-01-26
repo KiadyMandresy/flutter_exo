@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
 
 class skypekely extends StatefulWidget {
   const skypekely({super.key});
@@ -10,27 +11,14 @@ class skypekely extends StatefulWidget {
 class _SkypeKelyState extends State<skypekely> {
 
   List<String> messages = [];
-
   final TextEditingController _controller = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-
-    _controller.addListener(() {
-      final String text = _controller.text;
-      messages.add(text);
-      print('Messages: $messages');
-    });
-  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +27,19 @@ class _SkypeKelyState extends State<skypekely> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("2 eme"),
       ),
-      body: _corps(),
+      body: _corps(context),
     );
   }
 
-  Widget _corps() {
-    return Center(child: _getDiscussion());
+  Widget _corps(BuildContext context) {
+    return Center(child: _getDiscussion(context));
   }
 
-  Widget _getDiscussion() {
+  Widget _getDiscussion(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _getTextDisplay(),
+        _getTextDisplay(context),
         const SizedBox(
           height: 100,
           width: 50,
@@ -61,7 +49,7 @@ class _SkypeKelyState extends State<skypekely> {
     );
   }
 
-  Widget _getTextDisplay() {
+  Widget _getTextDisplay(BuildContext context) {
     return Expanded(
       flex: 2,
       child: Container(
@@ -71,6 +59,7 @@ class _SkypeKelyState extends State<skypekely> {
             width: 2.0,
           ),
         ),
+        child: _build(context)
       ),
     );
   }
@@ -90,7 +79,7 @@ class _SkypeKelyState extends State<skypekely> {
   Widget _buildTextField() {
     return Container(
       width: 300,
-      child:  TextField(
+      child: TextField(
         controller: _controller,
         keyboardType: TextInputType.multiline,
         decoration: const InputDecoration(
@@ -105,12 +94,23 @@ class _SkypeKelyState extends State<skypekely> {
     );
   }
 
+  String getTextFromTextField() {
+    return _controller.text;
+  }
+
+  void _handleInkWellTap() {
+    String text = getTextFromTextField();
+
+    setState(() {;
+      messages.add(text);
+      _controller.clear();
+    });
+  }
+
   Widget _buildButtonForSending() {
     return Expanded(
       child: InkWell(
-        onTap: () {
-          print("Card bleue est touchée.");
-        },
+        onTap: _handleInkWellTap,
         child: Container(
           height: 65,
           color: Colors.blue,
@@ -121,6 +121,33 @@ class _SkypeKelyState extends State<skypekely> {
           ),
         ),
       ),
+    );
+  }
+
+
+  Widget _build(BuildContext context) {
+    return ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: messages.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child:ChatBubble(
+                clipper: ChatBubbleClipper1(type: BubbleType.sendBubble),
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(top: 20),
+                backGroundColor: Colors.blue,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  child: Text(
+                    messages[index],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+          );
+        }
     );
   }
 }
